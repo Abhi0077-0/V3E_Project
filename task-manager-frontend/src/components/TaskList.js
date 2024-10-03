@@ -24,12 +24,13 @@ const TaskList = () => {
   const handleDelete = (taskId) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       axios
-        .delete(`https://task-manager-wa-ve3.onrender.com${taskId}`)
+        .delete(`https://task-manager-wa-ve3.onrender.com/tasks/${taskId}`) // Fixed API URL
         .then(() => {
-          setTasks(tasks.filter(task => task.id !== taskId));
+          setTasks(tasks.filter(task => task.id !== taskId)); // Remove deleted task from the state
         })
         .catch(err => {
           console.error('Failed to delete task', err);
+          alert('Failed to delete task'); // Optional alert for user feedback
         });
     }
   };

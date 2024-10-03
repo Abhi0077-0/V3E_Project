@@ -9,7 +9,7 @@ const TaskDetails = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://task-manager-wa-ve3.onrender.com${id}`)
+    axios.get(`https://task-manager-wa-ve3.onrender.com/tasks/${id}`)
       .then(response => {
         setTask(response.data);
         setLoading(false);
