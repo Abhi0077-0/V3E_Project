@@ -6,7 +6,7 @@ import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
 const Register = () => {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  // const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
@@ -25,7 +25,7 @@ const Register = () => {
 
     try {
       // Simulate registration request
-      await axios.post('task-manager-wa-ve3.onrender.com/register', { username, password });
+      await axios.post('https://task-manager-wa-ve3.onrender.com', { username, password });
       navigate('/login');
     } catch (err) {
       setError("Registration failed");
