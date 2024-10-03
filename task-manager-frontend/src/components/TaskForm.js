@@ -1,27 +1,30 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTasks, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';  // Import React and useState hook
+import axios from 'axios';  // Import Axios for making HTTP requests
+import { useNavigate } from 'react-router-dom';  // Import useNavigate for programmatic navigation
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import FontAwesomeIcon for icons
+import { faTasks, faInfoCircle } from '@fortawesome/free-solid-svg-icons';  // Import specific icons
 
 const TaskForm = () => {
+  // State variables for title, description, loading status, and error
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Initialize useNavigate for redirecting
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault();  // Prevent the default form submission
+    setLoading(true);  // Set loading to true while making the request
 
     try {
+      // Send POST request to add a new task
       await axios.post('https://task-manager-wa-ve3.onrender.com/tasks', { title, description });
-      navigate('/');  // Redirect to task list after adding
+      navigate('/');  // Redirect to task list after successfully adding
     } catch (error) {
-      setError('Failed to add task');
+      setError('Failed to add task');  // Set error state if the request fails
     } finally {
-      setLoading(false);
+      setLoading(false);  // Reset loading status
     }
   };
 
@@ -32,6 +35,7 @@ const TaskForm = () => {
           Add a New Task
         </h2>
 
+        {/* Error message display */}
         {error && (
           <p className="text-red-500 text-center mb-4">
             {error}
@@ -53,7 +57,7 @@ const TaskForm = () => {
                 className="w-full pl-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
                 placeholder="Enter task title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}  // Update title state on change
                 required
               />
             </div>
@@ -73,7 +77,7 @@ const TaskForm = () => {
                 placeholder="Enter task description"
                 rows="5"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value)}  // Update description state on change
                 required
               ></textarea>
             </div>
@@ -86,9 +90,9 @@ const TaskForm = () => {
               className={`w-full py-2 px-4 text-white font-bold rounded-md shadow-md ${
                 loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
               }`}
-              disabled={loading}
+              disabled={loading}  // Disable button while loading
             >
-              {loading ? 'Adding Task...' : 'Add Task'}
+              {loading ? 'Adding Task...' : 'Add Task'}  // Change button text based on loading state
             </button>
           </div>
         </form>
@@ -97,4 +101,4 @@ const TaskForm = () => {
   );
 };
 
-export default TaskForm;
+export default TaskForm;  // Export the TaskForm component as default

@@ -9,35 +9,42 @@ from flask import send_from_directory # type: ignore
 from flask_admin import Admin # type: ignore
 from flask_admin.contrib.sqla import ModelView # type: ignore
 
-
+# Initialize the Flask application
 app = Flask(__name__)
-CORS(app, origins=["https://task-manager-ve3-35qb.onrender.com"])  # Enable CORS for all routes
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
-app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
+# Enable CORS for the specified origins
+CORS(app, origins=["https://task-manager-ve3-35qb.onrender.com"])
 
+# Configuration settings for the application
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'  # Set up SQLite database
+app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'  # Secret key for JWT
+db = SQLAlchemy(app)  # Initialize the SQLAlchemy ORM
+bcrypt = Bcrypt(app)  # Initialize Bcrypt for password hashing
+jwt = JWTManager(app)  # Initialize JWT manager for token handling
+
+# Define the User model for the database
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    username = db.Column(db.String(150), nullable=False)  # Username of the user
+    password = db.Column(db.String(150), nullable=False)  # Hashed password
 
+# Define the Task model for the database
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.String(500), nullable=False)
-    completed = db.Column(db.Boolean, default=False)
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    title = db.Column(db.String(120), nullable=False)  # Title of the task
+    description = db.Column(db.String(500), nullable=False)  # Description of the task
+    completed = db.Column(db.Boolean, default=False)  # Status of the task (completed or not)
 
+# Create database tables
 with app.app_context():
     db.create_all()
     
+# Set up Flask Admin for managing User and Task models
 admin = Admin(app, name='Task Manager Admin', template_mode='bootstrap3')
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Task, db.session))
+admin.add_view(ModelView(User, db.session))  # Admin view for User model
+admin.add_view(ModelView(Task, db.session))  # Admin view for Task model
 
-# All User
+# Route to get all users
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()  # Query to get all users
@@ -47,60 +54,62 @@ def get_users():
         # You might not want to return the password in a real app
     } for user in users])
 
-# User Registration
+# Route for user registration
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    new_user = User(username=data['username'], password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({"message": "User created successfully"}), 201
+    data = request.get_json()  # Get JSON data from request
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')  # Hash the password
+    new_user = User(username=data['username'], password=hashed_password)  # Create new user
+    db.session.add(new_user)  # Add user to the session
+    db.session.commit()  # Commit the session
+    return jsonify({"message": "User created successfully"}), 201  # Return success message
 
-# User Login
+# Route for user login
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
+    data = request.get_json()  # Get JSON data from request
+    user = User.query.filter_by(username=data['username']).first()  # Find user by username
+    # Verify password and create access token
     if user and bcrypt.check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity={'username': user.username}, expires_delta=datetime.timedelta(hours=1))
-        return jsonify({'token': access_token}), 200
-    return jsonify({"message": "Invalid credentials"}), 401
+        return jsonify({'token': access_token}), 200  # Return the access token
+    return jsonify({"message": "Invalid credentials"}), 401  # Return error message
 
-# GET/tasks
+# Route to get all tasks
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    tasks = Task.query.all()
+    tasks = Task.query.all()  # Query to get all tasks
     return jsonify([{
         'id': task.id,
         'title': task.title,
         'description': task.description,
         'completed': task.completed
-    } for task in tasks])
+    } for task in tasks])  # Return tasks as JSON
 
-#GET/tasks/:id
+# Route to get a specific task by ID
 @app.route('/tasks/<int:id>', methods=['GET'])
 def get_task(id):
-    task = Task.query.get(id)
+    task = Task.query.get(id)  # Query to get task by ID
     if task:
         return jsonify({
             'id': task.id,
             'title': task.title,
             'description': task.description,
             'completed': task.completed
-        })
-    return jsonify({'error': 'Task not found!'}), 404
+        })  # Return task details
+    return jsonify({'error': 'Task not found!'}), 404  # Return error if task not found
 
-#POST/tasks
+# Route to create a new task
 @app.route('/tasks', methods=['POST'])
 def create_task():
-    data = request.json
+    data = request.json  # Get JSON data from request
+    # Check for required fields
     if 'title' not in data or 'description' not in data:
         return jsonify({'error': 'Title and description are required!'}), 400
     
-    new_task = Task(title=data['title'], description=data['description'])
-    db.session.add(new_task)
-    db.session.commit()
+    new_task = Task(title=data['title'], description=data['description'])  # Create new task
+    db.session.add(new_task)  # Add task to the session
+    db.session.commit()  # Commit the session
     
     return jsonify({
         'message': 'Task created.',
@@ -110,35 +119,37 @@ def create_task():
             'description': new_task.description,
             'completed': new_task.completed
         }
-    }), 201
+    }), 201  # Return success message and task details
 
-#PUT /tasks/:id
+# Route to update a specific task by ID
 @app.route('/tasks/<int:id>', methods=['PUT'])
 def update_task(id):
-    task = Task.query.get(id)
+    task = Task.query.get(id)  # Query to get task by ID
     if task:
-        data = request.json
+        data = request.json  # Get JSON data from request
+        # Check for required fields
         if 'title' not in data or 'description' not in data or 'completed' not in data:
             return jsonify({'error': 'Title, description, and completed status are required!'}), 400
         
+        # Update task details
         task.title = data['title']
         task.description = data['description']
         task.completed = data['completed']
         
-        db.session.commit()
-        return jsonify({'message': 'Task updated!'})
-    return jsonify({'error': 'Task not found!'}), 404
+        db.session.commit()  # Commit the session
+        return jsonify({'message': 'Task updated!'})  # Return success message
+    return jsonify({'error': 'Task not found!'}), 404  # Return error if task not found
     
-#DELETE/tasks/:id
+# Route to delete a specific task by ID
 @app.route('/tasks/<int:id>', methods=['DELETE'])
 def delete_task(id):
-    task = Task.query.get(id)
+    task = Task.query.get(id)  # Query to get task by ID
     if task:
-        db.session.delete(task)
-        db.session.commit()
-        return jsonify({'message': 'Task deleted.'})
-    return jsonify({'error': 'Task not found!'}), 404
+        db.session.delete(task)  # Delete task from the session
+        db.session.commit()  # Commit the session
+        return jsonify({'message': 'Task deleted.'})  # Return success message
+    return jsonify({'error': 'Task not found!'}), 404  # Return error if task not found
 
+# Run the Flask application
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    

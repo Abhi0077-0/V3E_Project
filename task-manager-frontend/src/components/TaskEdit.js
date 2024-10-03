@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTasks, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';  // Import React and useState, useEffect hooks
+import axios from 'axios';  // Import Axios for making HTTP requests
+import { useParams, useNavigate } from 'react-router-dom';  // Import hooks for URL parameters and navigation
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import FontAwesomeIcon for icons
+import { faTasks, faInfoCircle } from '@fortawesome/free-solid-svg-icons';  // Import specific icons
 
 const TaskEdit = () => {
-  const { id } = useParams();  // Get task ID from the URL
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [completed, setCompleted] = useState(false); // Add completed state
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const { id } = useParams();  // Get task ID from the URL parameters
+  const [title, setTitle] = useState('');  // State for task title
+  const [description, setDescription] = useState('');  // State for task description
+  const [completed, setCompleted] = useState(false); // State for task completion status
+  const [loading, setLoading] = useState(true);  // Loading state to manage the fetch status
+  const [error, setError] = useState(null);  // Error state to manage error messages
+  const navigate = useNavigate();  // Initialize navigate function for programmatic navigation
 
   // Fetch task details when the component mounts
   useEffect(() => {
     axios.get(`https://task-manager-wa-ve3.onrender.com/tasks/${id}`)
       .then(response => {
-        const task = response.data;
-        setTitle(task.title);
-        setDescription(task.description);
+        const task = response.data;  // Get task data from response
+        setTitle(task.title);  // Set title from API data
+        setDescription(task.description);  // Set description from API data
         setCompleted(task.completed); // Set completed status from API
-        setLoading(false);
+        setLoading(false);  // Set loading to false after data is fetched
       })
       .catch(err => {
-        setError('Failed to load task');
-        setLoading(false);
+        setError('Failed to load task');  // Set error message on fetch failure
+        setLoading(false);  // Set loading to false
       });
   }, [id]);
 
   // Handle form submission to update the task
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault();  // Prevent the default form submission
+    setLoading(true);  // Set loading to true while updating the task
 
     axios.put(`https://task-manager-wa-ve3.onrender.com/tasks/${id}`, { 
       title, 
@@ -40,13 +40,13 @@ const TaskEdit = () => {
       completed // Include completed status in the request
     })
       .then(() => {
-        navigate('/');  // Navigate back to the task list after editing
+        navigate('/');  // Navigate back to the task list after updating
       })
       .catch(err => {
-        setError('Failed to update task');
+        setError('Failed to update task');  // Set error message if the update fails
       })
       .finally(() => {
-        setLoading(false);
+        setLoading(false);  // Reset loading status
       });
   };
 
@@ -57,12 +57,14 @@ const TaskEdit = () => {
           Edit Task
         </h2>
 
+        {/* Display error message if there's an error */}
         {error && (
           <p className="text-red-500 text-center mb-4">
             {error}
           </p>
         )}
 
+        {/* Show loading message while fetching task details */}
         {loading ? (
           <div className="text-center text-lg text-gray-500">Loading task...</div>
         ) : (
@@ -80,8 +82,8 @@ const TaskEdit = () => {
                   type="text"
                   className="w-full pl-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
                   placeholder="Enter task title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}  // Bind value to title state
+                  onChange={(e) => setTitle(e.target.value)}  // Update title state on input change
                   required
                 />
               </div>
@@ -100,8 +102,8 @@ const TaskEdit = () => {
                   className="w-full pl-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
                   placeholder="Enter task description"
                   rows="8" 
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}  // Bind value to description state
+                  onChange={(e) => setDescription(e.target.value)}  // Update description state on input change
                   required
                 ></textarea>
               </div>
@@ -114,9 +116,9 @@ const TaskEdit = () => {
                 className={`w-full py-2 px-4 text-white font-bold rounded-md shadow-md ${
                   loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
                 }`}
-                disabled={loading}
+                disabled={loading}  // Disable button while loading
               >
-                {loading ? 'Updating Task...' : 'Update Task'}
+                {loading ? 'Updating Task...' : 'Update Task'}  // Change button text based on loading state
               </button>
             </div>
           </form>
@@ -126,4 +128,4 @@ const TaskEdit = () => {
   );
 };
 
-export default TaskEdit;
+export default TaskEdit;  // Export the TaskEdit component as default
