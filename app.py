@@ -8,7 +8,7 @@ import os
 from flask import send_from_directory # type: ignore
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": "https://task-manager-ve3-35qb.onrender.com"}})  # Enable CORS for all routes
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
 app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'
