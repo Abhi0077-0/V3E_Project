@@ -9,7 +9,7 @@ const TaskDetails = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://127.0.0.1:5000/tasks/${id}`)
+    axios.get(`https://task-manager-webapp-ve3.onrender.com/tasks/${id}`)
       .then(response => {
         setTask(response.data);
         setLoading(false);

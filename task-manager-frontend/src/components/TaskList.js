@@ -10,7 +10,7 @@ const TaskList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/tasks')
+    axios.get('https://task-manager-webapp-ve3.onrender.com/tasks')
       .then(response => {
         setTasks(response.data);
         setLoading(false);
@@ -24,7 +24,7 @@ const TaskList = () => {
   const handleDelete = (taskId) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       axios
-        .delete(`http://127.0.0.1:5000/tasks/${taskId}`)
+        .delete(`https://task-manager-webapp-ve3.onrender.com/tasks/${taskId}`)
         .then(() => {
           setTasks(tasks.filter(task => task.id !== taskId));
         })

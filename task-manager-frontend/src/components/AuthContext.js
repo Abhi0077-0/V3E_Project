@@ -16,7 +16,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('http://127.0.0.1:5000/login', { username, password });
+      const response = await axios.post('https://task-manager-webapp-ve3.onrender.com/login', { username, password });
       setToken(response.data.token);
       localStorage.setItem('token', response.data.token);
       const user = JSON.parse(atob(response.data.token.split('.')[1]));

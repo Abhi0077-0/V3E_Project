@@ -16,7 +16,7 @@ const TaskForm = () => {
     setLoading(true);
 
     try {
-      await axios.post('http://127.0.0.1:5000/tasks', { title, description });
+      await axios.post('https://task-manager-webapp-ve3.onrender.com/tasks', { title, description });
       navigate('/');  // Redirect to task list after adding
     } catch (error) {
       setError('Failed to add task');
