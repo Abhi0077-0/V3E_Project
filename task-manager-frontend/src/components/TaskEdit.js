@@ -15,7 +15,7 @@ const TaskEdit = () => {
 
   // Fetch task details when the component mounts
   useEffect(() => {
-    axios.get(`https://task-manager-webapp-ve3.onrender.com/tasks/${id}`)
+    axios.get(`https://task-manager-wa-ve3.onrender.com${id}`)
       .then(response => {
         const task = response.data;
         setTitle(task.title);
@@ -34,7 +34,7 @@ const TaskEdit = () => {
     e.preventDefault();
     setLoading(true);
 
-    axios.put(`https://task-manager-webapp-ve3.onrender.com/tasks/${id}`, { 
+    axios.put(`https://task-manager-wa-ve3.onrender.com${id}`, { 
       title, 
       description, 
       completed // Include completed status in the request

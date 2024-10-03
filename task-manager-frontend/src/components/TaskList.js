@@ -24,7 +24,7 @@ const TaskList = () => {
   const handleDelete = (taskId) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       axios
-        .delete(`https://task-manager-webapp-ve3.onrender.com/tasks/${taskId}`)
+        .delete(`https://task-manager-wa-ve3.onrender.com${taskId}`)
         .then(() => {
           setTasks(tasks.filter(task => task.id !== taskId));
         })
