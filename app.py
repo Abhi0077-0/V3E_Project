@@ -6,6 +6,9 @@ import datetime
 from flask_bcrypt import Bcrypt # type: ignore
 import os
 from flask import send_from_directory # type: ignore
+from flask_admin import Admin # type: ignore
+from flask_admin.contrib.sqla import ModelView # type: ignore
+
 
 app = Flask(__name__)
 CORS(app, origins=["https://task-manager-ve3-35qb.onrender.com"])  # Enable CORS for all routes
@@ -15,6 +18,10 @@ app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+admin = Admin(app, name='Task Manager Admin', template_mode='bootstrap3')
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Task, db.session))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,6 +36,16 @@ class Task(db.Model):
 
 with app.app_context():
     db.create_all()
+
+# All User
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()  # Query to get all users
+    return jsonify([{
+        'id': user.id,
+        'username': user.username,
+        # You might not want to return the password in a real app
+    } for user in users])
 
 # User Registration
 @app.route('/register', methods=['POST'])
