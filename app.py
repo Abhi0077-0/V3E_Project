@@ -19,10 +19,6 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-admin = Admin(app, name='Task Manager Admin', template_mode='bootstrap3')
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Task, db.session))
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False)
@@ -36,6 +32,10 @@ class Task(db.Model):
 
 with app.app_context():
     db.create_all()
+    
+admin = Admin(app, name='Task Manager Admin', template_mode='bootstrap3')
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Task, db.session))
 
 # All User
 @app.route('/users', methods=['GET'])
