@@ -118,7 +118,7 @@ const TaskEdit = () => {
                 }`}
                 disabled={loading}  // Disable button while loading
               >
-                {loading ? 'Updating Task...' : 'Update Task'}  // Change button text based on loading state
+                {loading ? 'Updating Task...' : 'Update Task'}  
               </button>
             </div>
           </form>
