@@ -10,7 +10,7 @@ const TaskList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('https://task-manager-webapp-ve3.onrender.com/tasks')
+    axios.get('https://task-manager-wa-ve3.onrender.com/tasks')
       .then(response => {
         setTasks(response.data);
         setLoading(false);
