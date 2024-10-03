@@ -24,7 +24,7 @@ const Register = () => {
 
     try {
       // Simulate registration request
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
+      await axios.post('task-manager-wa-ve3.onrender.com/register', { username, password });
       navigate('/login');
     } catch (err) {
       setError("Registration failed");
