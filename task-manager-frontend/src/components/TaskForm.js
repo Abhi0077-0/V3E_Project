@@ -92,7 +92,7 @@ const TaskForm = () => {
               }`}
               disabled={loading}  // Disable button while loading
             >
-              {loading ? 'Adding Task...' : 'Add Task'}  // Change button text based on loading state
+              {loading ? 'Adding Task...' : 'Add Task'}  
             </button>
           </div>
         </form>
