@@ -17,7 +17,7 @@ app = Flask(__name__)
 CORS(app, origins=["https://task-manager-ve3-35qb.onrender.com"])
 
 # Configuration settings for the application
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('postgresql://postgresql_tm_ve3_user:ydGbUsXGpy0d9T31jZQjxICBf1V0Ub2A@dpg-crvmdui3esus7393dn6g-a/postgresql_tm_ve3')  # Set up SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Fetch the DATABASE_URL from environment variables
 app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'  # Secret key for JWT
 db = SQLAlchemy(app)  # Initialize the SQLAlchemy ORM
 bcrypt = Bcrypt(app)  # Initialize Bcrypt for password hashing
