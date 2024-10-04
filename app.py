@@ -8,6 +8,7 @@ import os
 from flask import send_from_directory # type: ignore
 from flask_admin import Admin # type: ignore
 from flask_admin.contrib.sqla import ModelView # type: ignore
+from flask_migrate import Migrate
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -16,11 +17,12 @@ app = Flask(__name__)
 CORS(app, origins=["https://task-manager-ve3-35qb.onrender.com"])
 
 # Configuration settings for the application
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'  # Set up SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///tasks.db')  # Set up SQLite database
 app.config['JWT_SECRET_KEY'] = 'VE3PROJECT'  # Secret key for JWT
 db = SQLAlchemy(app)  # Initialize the SQLAlchemy ORM
 bcrypt = Bcrypt(app)  # Initialize Bcrypt for password hashing
 jwt = JWTManager(app)  # Initialize JWT manager for token handling
+migrate = Migrate(app, db)
 
 # Define the User model for the database
 class User(db.Model):
