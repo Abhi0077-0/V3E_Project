@@ -25,6 +25,7 @@ POSTGRESQL/PGadmin: Used to store task data.
 
 Installation
 Prerequisites:
+You can check requirement.txt for all the packages but below I have mentioned all neccessary packages.
 Python (>= 3.7)
 Node.js (>= 14.x)
 npm (comes with Node.js)
@@ -57,7 +58,7 @@ Start the React development server.
       npm start
 The frontend should be running on http://localhost:3000.
 
-For runing this code on your local machine (Computer/Laptop) make sure to cahnge the url with the localhost server in app.py,app.js,and in ./src/componenets files. You can check the servers mention above for localhost.
+For runing this code on your local machine (Computer/Laptop) make sure to cahnge the url with the localhost server in app.py,app.js,and in ./src/componenets files. You can check the servers mention above for localhost. Also you need to change database for local hosting (SQLALCHEMY_DATABASE_URI) you need to use SQLLite the command for sqllite is "sqlite:///tasks.db".
 
 Note: It is compalsory to register before using the webapplication.
 
