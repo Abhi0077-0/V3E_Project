@@ -28,7 +28,7 @@ const Register = () => {
 
     try {
       // Simulate registration request
-      await axios.post('https://task-manager-wa-ve3.onrender.com', { username, email, password });
+      await axios.post('https://task-manager-wa-ve3.onrender.com/register', { username, email, password });
       navigate('/login');  // Navigate to the login page on successful registration
     } catch (err) {
       setError("Registration failed");  // Set error message on failure
