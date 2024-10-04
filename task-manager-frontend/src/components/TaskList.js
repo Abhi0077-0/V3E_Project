@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from 'react';  // Import React and hooks
-import axios from 'axios';  // Import Axios for making HTTP requests
-import { Link } from 'react-router-dom';  // Import Link for navigation between routes
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import FontAwesomeIcon for icons
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';  // Import specific icons
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const TaskList = () => {
-  // State variables
-  const [tasks, setTasks] = useState([]);  // State for storing tasks
-  const [loading, setLoading] = useState(true);  // State to indicate loading status
-  const [error, setError] = useState(null);  // State for error handling
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch tasks from the API when the component mounts
   useEffect(() => {
-    axios.get('https://task-manager-wa-ve3.onrender.com/tasks')  // API call to get tasks
+    axios.get('https://task-manager-wa-ve3.onrender.com/tasks')
       .then(response => {
-        setTasks(response.data);  // Update tasks state with fetched data
-        setLoading(false);  // Set loading to false after data is fetched
+        setTasks(response.data);
+        setLoading(false);
       })
       .catch(error => {
-        setError('Failed to fetch tasks');  // Set error state if the API call fails
-        setLoading(false);  // Set loading to false
+        setError('Failed to fetch tasks');
+        setLoading(false);
       });
-  }, []);  // Empty dependency array to run effect only on mount
+  }, []);
 
-  // Function to handle task deletion
+  // Function to handle the delete operation
   const handleDelete = (taskId) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {  // Confirm deletion
+    if (window.confirm('Are you sure you want to delete this task?')) {
       axios
-        .delete(`https://task-manager-wa-ve3.onrender.com/tasks/${taskId}`)  // API call to delete task
+        .delete(`https://task-manager-wa-ve3.onrender.com/tasks/${taskId}`)
         .then(() => {
-          setTasks(tasks.filter(task => task.id !== taskId));  // Remove deleted task from the state
+          setTasks(tasks.filter(task => task.id !== taskId));
         })
         .catch(err => {
-          console.error('Failed to delete task', err);  // Log error in the console
-          alert('Failed to delete task');  // Optional alert for user feedback
+          console.error('Failed to delete task', err);
         });
     }
   };
 
-  // Render loading state or error state
+  // Function to handle toggling of the completed status
+  const handleToggleComplete = (taskId) => {
+    const task = tasks.find(t => t.id === taskId);
+    const updatedTask = { ...task, completed: !task.completed };  // Toggle completed status
+
+    axios.put(`https://task-manager-wa-ve3.onrender.com/tasks/${taskId}`, updatedTask)
+      .then(() => {
+        setTasks(tasks.map(t => (t.id === taskId ? updatedTask : t)));  // Update the state
+      })
+      .catch(err => {
+        console.error('Failed to update task', err);
+      });
+  };
+
   if (loading) return <div className="text-center mt-10 text-lg text-gray-500">Loading tasks...</div>;
   if (error) return <div className="text-center mt-10 text-lg text-red-500">{error}</div>;
 
@@ -48,40 +58,46 @@ const TaskList = () => {
         {/* Add New Task Button */}
         <div className="flex justify-end mb-8">
           <Link
-            to="/tasks/new"  // Link to add a new task
+            to="/tasks/new"
             className="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded-md shadow-md"
           >
             Add New Task
           </Link>
         </div>
 
-        {/* Task List Title */}
+        {/* Task List */}
         <h1 className="text-4xl font-bold text-center text-gray-100 mb-8">
           Your Task List
         </h1>
 
-        {/* Task List */}
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map(task => (  // Map through tasks to create list items
+          {tasks.map(task => (
             <li key={task.id} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    {task.title}  {/* Task title */}
+                  <h3 className={`text-xl font-semibold text-gray-800 mb-2 ${task.completed ? 'line-through' : ''}`}>
+                    {task.title}
                   </h3>
-                  <p className="text-gray-600">{task.description}</p>  {/* Task description */}
+                  <p className={`text-gray-600 ${task.completed ? 'line-through' : ''}`}>{task.description}</p>
                 </div>
                 <div className="flex space-x-4">
-                  {/* Edit Task Link */}
+                  {/* Checkbox for completion */}
+                  <input
+                    type="checkbox"
+                    checked={task.completed}
+                    onChange={() => handleToggleComplete(task.id)}
+                    className="cursor-pointer"
+                  />
+                  {/* Edit Task */}
                   <Link to={`/tasks/${task.id}/edit`} className="text-blue-500 hover:text-blue-700">
-                    <FontAwesomeIcon icon={faEdit} />  {/* Edit icon */}
+                    <FontAwesomeIcon icon={faEdit} />
                   </Link>
-                  {/* Delete Task Button */}
+                  {/* Delete Task */}
                   <button
-                    onClick={() => handleDelete(task.id)}  // Call handleDelete on click
+                    onClick={() => handleDelete(task.id)}
                     className="text-red-500 hover:text-red-700"
                   >
-                    <FontAwesomeIcon icon={faTrash} />  {/* Delete icon */}
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </div>
               </div>
@@ -93,4 +109,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;  // Export the TaskList component as default
+export default TaskList;

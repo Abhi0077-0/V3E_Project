@@ -139,7 +139,7 @@ def update_task(id):
         task.completed = data['completed']
         
         db.session.commit()  # Commit the session
-        return jsonify({'message': 'Task updated!'})  # Return success message
+        return jsonify({'message': 'Task updated!'}), 200  # Return success message
     return jsonify({'error': 'Task not found!'}), 404  # Return error if task not found
     
 # Route to delete a specific task by ID
